@@ -185,3 +185,5 @@ If you cannot agree to these terms, **do not use UrbanOS-PoC**.
 
 “UrbanOS” may be used to describe unmodified, compliant distributions. **Do not imply endorsement** by the authors or contributors. You must clearly mark forks and materially modified versions.
 
+Contact: pablo-chacon-ai@proton.me
+
