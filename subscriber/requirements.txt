@@ -1,0 +1,7 @@
+paho-mqtt
+psycopg[binary]
+psycopg[pool]
+python-dotenv
+numpy
+geopy
+shapely

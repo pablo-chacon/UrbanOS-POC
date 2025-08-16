@@ -1,0 +1,7 @@
+psycopg[binary]  # PostgreSQL connection (psycopg3)
+pandas  # Data processing
+geopandas
+numpy  # Mathematical operations
+python-dotenv  # Environment variable management
+scikit-learn
+shapely

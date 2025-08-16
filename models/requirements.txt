@@ -1,0 +1,11 @@
+tensorflow
+keras
+numpy
+pandas
+psycopg[binary]
+python-dotenv
+scikit-learn
+geopandas
+shapely
+geopy
+pyarrow

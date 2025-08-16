@@ -1,0 +1,6 @@
+psycopg[binary]
+shapely
+geopy
+python-dotenv
+pandas
+geopandas

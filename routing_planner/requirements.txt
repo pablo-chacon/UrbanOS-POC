@@ -1,0 +1,5 @@
+psycopg[binary]
+python-dotenv
+pandas
+numpy
+shapely

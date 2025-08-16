@@ -1,0 +1,8 @@
+# General dependencies
+requests
+python-dotenv
+# Database dependencies
+psycopg  # PostgreSQL driver for psycopg3
+# Data processing
+pandas
+gtfs-realtime-bindings

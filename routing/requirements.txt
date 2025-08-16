@@ -1,0 +1,7 @@
+psycopg[binary]
+pandas
+geopandas
+shapely
+python-dotenv
+tensorflow
+numpy
