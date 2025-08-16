@@ -205,24 +205,6 @@ services:
       - lbrp-network
     restart: always
 
-  geo_fencing:
-    build:
-      context: ./geo_fencing
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    environment:
-      - PYTHONUNBUFFERED=1
-      - PYTHONDONTWRITEBYTECODE=1
-    volumes:
-      - ./geo_fencing:/app
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - lbrp-network
-    restart: always
-
   retention:
     build:
       context: ./retention

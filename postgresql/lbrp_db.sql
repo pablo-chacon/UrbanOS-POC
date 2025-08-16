@@ -47,25 +47,6 @@ CREATE TABLE "trajectories" (
                                 CONSTRAINT "unique_session_id" UNIQUE (session_id)
 );
 
--- Elastic geo-fence table
-CREATE TABLE IF NOT EXISTS "geo_fence" (
-                                           "id" SERIAL PRIMARY KEY,
-                                           "client_id" TEXT NOT NULL,
-                                           "geo_fence" GEOMETRY(POLYGON, 4326) NOT NULL,
-                                           "location_name" TEXT,
-                                           "source" TEXT DEFAULT 'auto',
-                                           "created_at" TIMESTAMP DEFAULT NOW(),
-                                           UNIQUE("client_id")
-);
-
--- Create Elastic Goe-Fence spikes
-CREATE TABLE IF NOT EXISTS "geo_fence_spikes" (
-                                                  "client_id" TEXT NOT NULL,
-                                                  "poi_id" UUID NOT NULL,
-                                                  "geom" GEOMETRY(Point, 4326) NOT NULL,
-                                                  PRIMARY KEY ("client_id", "poi_id")
-);
-
 -- Routes from A*
 CREATE TABLE IF NOT EXISTS "astar_routes" (
                                               id SERIAL PRIMARY KEY,
@@ -782,3 +763,286 @@ FROM (
               ) r
      ) x
 WHERE rn = 1;
+
+-- POIs ⟷ GTFS stops (nearest + within radius)
+CREATE OR REPLACE VIEW "view_pois_nearest_stop" AS
+SELECT
+    p."poi_id",
+    p."client_id",
+    p."lat",
+    p."lon",
+    p."geom"        AS poi_geom,
+    p."poi_rank",
+    p."time_spent",
+    p."source",
+    p."visit_start",
+    p."visit_count",
+    p."created_at"  AS poi_created_at,
+    s."stop_id",
+    s."stop_name",
+    s."parent_station",
+    s."platform_code",
+    s."stop_lat",
+    s."stop_lon",
+    s."geom"        AS stop_geom,
+    ST_DistanceSphere(p."geom", s."geom")::float AS meters_to_stop
+FROM "pois" p
+         LEFT JOIN LATERAL (
+    SELECT
+        gs."stop_id", gs."stop_name", gs."parent_station", gs."platform_code",
+        gs."stop_lat", gs."stop_lon", gs."geom"
+    FROM "gtfs_stops" gs
+    ORDER BY p."geom" <-> gs."geom"   -- KNN, uses GiST on gtfs_stops.geom if present
+    LIMIT 1
+    ) s ON TRUE;
+
+
+CREATE OR REPLACE VIEW "view_pois_stops_within_300m" AS
+SELECT
+    p."poi_id",
+    p."client_id",
+    p."lat",
+    p."lon",
+    p."geom"        AS poi_geom,
+    p."poi_rank",
+    p."time_spent",
+    s."stop_id",
+    s."stop_name",
+    s."parent_station",
+    s."platform_code",
+    s."stop_lat",
+    s."stop_lon",
+    s."geom"        AS stop_geom,
+    ST_DistanceSphere(p."geom", s."geom")::float AS meters_to_stop
+FROM "pois" p
+         JOIN "gtfs_stops" s
+              ON ST_DWithin(p."geom"::geography, s."geom"::geography, 300);
+
+
+-- 2) Latest routes (optimized + reroutes) per client, like view_latest_client_trajectories
+CREATE OR REPLACE VIEW "view_latest_client_routes" AS
+SELECT *
+FROM (
+         SELECT
+             h.*,
+             ROW_NUMBER() OVER (PARTITION BY h."client_id" ORDER BY h."created_at" DESC) AS rn
+         FROM "view_routes_history" h
+     ) sub
+WHERE rn <= 8;
+
+
+
+-- A* and MAPF unified
+CREATE OR REPLACE VIEW "view_routes_astar_mapf_unified" AS
+SELECT
+    ar."client_id",
+    ar."stop_id",
+    ar."destination_lat",
+    ar."destination_lon",
+    ar."path",
+    ar."distance"::double precision          AS distance_meters,
+    ar."decision_context",
+    ar."predicted_eta",
+    TRUE                                     AS success,
+    'astar'::text                            AS method,
+    ar."created_at"
+FROM "astar_routes" ar
+
+UNION ALL
+
+SELECT
+    mr."client_id",
+    mr."stop_id",
+    mr."destination_lat",
+    mr."destination_lon",
+    mr."path",
+    mr."distance"::double precision          AS distance_meters,
+    mr."decision_context",
+    NULL::timestamp                          AS predicted_eta,
+    mr."success",
+    'mapf'::text                             AS method,
+    mr."created_at"
+FROM "mapf_routes" mr;
+
+
+-- Latest (one) per client across A*+MAPF
+CREATE OR REPLACE VIEW "view_routes_astar_mapf_latest" AS
+SELECT *
+FROM (
+         SELECT
+             u.*,
+             ROW_NUMBER() OVER (PARTITION BY u."client_id" ORDER BY u."created_at" DESC) AS rn
+         FROM "view_routes_astar_mapf_unified" u
+     ) x
+WHERE rn = 1;
+
+
+-- ETA accuracy vs actual departure (error in seconds, + means ETA was early)
+--   Matches A* predicted_eta with nearest departure at same stop within ±5 minutes.
+CREATE OR REPLACE VIEW "view_eta_accuracy_seconds" AS
+WITH eta_base AS (
+    SELECT
+        ar."client_id",
+        ar."stop_id",
+        ar."predicted_eta",
+        ar."created_at" AS route_created_at
+    FROM "astar_routes" ar
+    WHERE ar."predicted_eta" IS NOT NULL
+),
+     nearest_departure AS (
+         SELECT
+             e."client_id",
+             e."stop_id",
+             e."predicted_eta",
+             tu."departure_time",
+             tu."trip_id",
+             tu."delay_seconds",
+             tu."status",
+             ROW_NUMBER() OVER (
+                 PARTITION BY e."client_id", e."stop_id", e."predicted_eta"
+                 ORDER BY ABS(EXTRACT(EPOCH FROM (tu."departure_time" - e."predicted_eta"))) ASC
+                 ) AS rn
+         FROM eta_base e
+                  JOIN "trip_updates" tu
+                       ON tu."stop_id" = e."stop_id"
+                           AND tu."departure_time" BETWEEN (e."predicted_eta" - INTERVAL '5 minutes')
+                              AND (e."predicted_eta" + INTERVAL '5 minutes')
+     )
+SELECT
+    n."client_id",
+    n."stop_id",
+    n."trip_id",
+    n."predicted_eta",
+    n."departure_time",
+    COALESCE(n."delay_seconds", 0) AS delay_seconds,
+    n."status",
+    (EXTRACT(EPOCH FROM (n."departure_time" - n."predicted_eta"))::int) AS eta_error_seconds
+FROM nearest_departure n
+WHERE n.rn = 1;
+
+
+-- Per-client boarding-window hits (40–90s window), last 24h
+CREATE OR REPLACE VIEW "view_boarding_window_hit_rate" AS
+WITH candidates AS (
+    SELECT
+        d."client_id",
+        d."stop_id",
+        d."trip_id",
+        d."departure_time",
+        d."predicted_eta",
+        (d."departure_time" BETWEEN (d."predicted_eta" + INTERVAL '40 seconds')
+            AND     (d."predicted_eta" + INTERVAL '90 seconds')) AS hit
+    FROM "view_departure_candidates" d
+    WHERE d."departure_time" >= NOW() - INTERVAL '24 hours'
+)
+SELECT
+    "client_id",
+    COUNT(*)                       AS total_candidates,
+    SUM(CASE WHEN hit THEN 1 ELSE 0 END) AS hits,
+    ROUND(100.0 * SUM(CASE WHEN hit THEN 1 ELSE 0 END) / NULLIF(COUNT(*),0), 2) AS hit_rate_pct
+FROM candidates
+GROUP BY "client_id";
+
+
+-- Latest live position per client (point geom)
+CREATE OR REPLACE VIEW "view_geodata_latest_point" AS
+SELECT
+    g."client_id",
+    g."session_id",
+    g."lat",
+    g."lon",
+    COALESCE(g."geom", ST_SetSRID(ST_MakePoint(g."lon", g."lat"), 4326)) AS geom,
+    g."speed",
+    g."activity",
+    g."timestamp",
+    g."updated_at"
+FROM (
+         SELECT
+             gg.*,
+             ROW_NUMBER() OVER (PARTITION BY gg."client_id" ORDER BY gg."timestamp" DESC, gg."updated_at" DESC) AS rn
+         FROM "geodata" gg
+     ) g
+WHERE g.rn = 1;
+
+
+-- Stop usage by client (last 7 days)
+CREATE OR REPLACE VIEW "view_stop_usage_7d" AS
+SELECT
+    h."client_id",
+    COALESCE(h."stop_id", '∅') AS stop_id,
+    COUNT(*)                   AS route_count_7d,
+    MIN(h."created_at")        AS first_seen_7d,
+    MAX(h."created_at")        AS last_seen_7d
+FROM "view_routes_history" h
+WHERE h."created_at" >= NOW() - INTERVAL '7 days'
+GROUP BY h."client_id", COALESCE(h."stop_id", '∅');
+
+
+-- Predicted POIs → nearest stops (prep for schedule/departure lookups)
+CREATE OR REPLACE VIEW "view_predicted_poi_nearest_stop" AS
+SELECT
+    p."id"               AS predicted_id,
+    p."client_id",
+    p."predicted_visit_time",
+    p."prediction_type",
+    p."predicted_lat",
+    p."predicted_lon",
+    p."geom"             AS predicted_geom,
+    s."stop_id",
+    s."stop_name",
+    s."parent_station",
+    s."platform_code",
+    s."geom"             AS stop_geom,
+    ST_DistanceSphere(p."geom", s."geom")::float AS meters_to_stop
+FROM "predicted_pois_sequence" p
+         LEFT JOIN LATERAL (
+    SELECT gs.*
+    FROM "gtfs_stops" gs
+    ORDER BY p."geom" <-> gs."geom"
+    LIMIT 1
+    ) s ON TRUE;
+
+
+-- Weekly plan joined with POI labels + nearest stop
+CREATE OR REPLACE VIEW "view_client_weekly_schedule_enriched" AS
+SELECT
+    w."id",
+    w."client_id",
+    w."visit_day",
+    w."predicted_time",
+    w."prediction_type",
+    w."poi_lat",
+    w."poi_lon",
+    w."path",
+    w."segment_type",
+    w."created_at",
+    pn."stop_id"         AS nearest_stop_id,
+    pn."stop_name"       AS nearest_stop_name,
+    pn."meters_to_stop"  AS poi_to_stop_meters
+FROM "client_weekly_schedule" w
+         LEFT JOIN LATERAL (
+    SELECT
+        gs."stop_id",
+        gs."stop_name",
+        ST_DistanceSphere(
+                ST_SetSRID(ST_MakePoint(w."poi_lon", w."poi_lat"), 4326),
+                gs."geom"
+        )::float AS meters_to_stop
+    FROM "gtfs_stops" gs
+    ORDER BY ST_SetSRID(ST_MakePoint(w."poi_lon", w."poi_lat"), 4326) <-> gs."geom"
+    LIMIT 1
+    ) pn ON TRUE;
+
+
+-- “Feasible next departures per client” (one best per client right now)
+CREATE OR REPLACE VIEW "view_next_feasible_departure_per_client" AS
+SELECT *
+FROM (
+         SELECT
+             d.*,
+             ROW_NUMBER() OVER (PARTITION BY d."client_id" ORDER BY d."departure_time" ASC) AS rn
+         FROM "view_departure_candidates" d
+         WHERE d."departure_time" >= NOW()
+     ) q
+WHERE rn = 1;
+

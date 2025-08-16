@@ -51,10 +51,8 @@ def load_from_db(query: str, params: tuple = ()) -> List[Dict[str, Any]]:
 
 def fetch_optimized_route() -> List[Dict[str, Any]]:
     """
-    Return the freshest unified routes for the *current* session per client.
-    - Resolves session_id by joining to view_current_session_id_from_geodata (latest geodata per client).
-    - Tags each route with the correct session window via mqtt_sessions (time-bound join).
-    - Limits to rows created in the last ~10 seconds to avoid republishing old history.
+    Return freshest unified routes; resolve session_id purely by time-window.
+    Avoids dependency on 'current' geodata session which can filter valid rows.
     """
     query = """
         SELECT
@@ -73,15 +71,16 @@ def fetch_optimized_route() -> List[Dict[str, Any]]:
             SELECT "client_id","stop_id","destination_lat","destination_lon","path","segment_type","created_at"
             FROM "reroutes"
         ) AS r
-        JOIN "mqtt_sessions" AS s
-          ON s."client_id" = r."client_id"
-         AND r."created_at" >= s."start_time"
-         AND r."created_at" <  s."end_time"
-        JOIN "view_current_session_id_from_geodata" AS c
-          ON c."client_id" = r."client_id"
-         AND c."session_id" = s."session_id"
-        WHERE r."created_at" >= NOW() - INTERVAL '10 seconds'
+        JOIN LATERAL (
+            SELECT s."session_id"
+            FROM "mqtt_sessions" s
+            WHERE s."client_id" = r."client_id"
+              AND r."created_at" >= s."start_time"
+              AND r."created_at" <  s."end_time"
+            ORDER BY s."start_time" DESC
+            LIMIT 1
+        ) AS s ON TRUE
+        WHERE r."created_at" >= NOW() - INTERVAL '60 seconds'
         ORDER BY r."created_at" DESC;
     """
     return load_from_db(query, ())
-

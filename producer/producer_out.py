@@ -83,7 +83,7 @@ def publish_results(poll_seconds: int = 5):
 
                 try:
                     # QoS 1 is a good default for results
-                    client.publish(topic, json.dumps(payload), qos=1)
+                    client.publish(topic, json.dumps(payload), qos=1, retain=True)
                     logging.info(f"📤 Published → {topic}: {payload}")
                 except Exception as e:
                     logging.error(f"❌ MQTT publish failed for {client_id}/{session_id}: {e}")
