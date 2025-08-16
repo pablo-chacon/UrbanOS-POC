@@ -51,19 +51,37 @@ def load_from_db(query: str, params: tuple = ()) -> List[Dict[str, Any]]:
 
 def fetch_optimized_route() -> List[Dict[str, Any]]:
     """
-    Return the freshest unified routes from view_routes_unified.
-    We pull rows created in the last ~10 seconds to avoid republishing old history.
+    Return the freshest unified routes for the *current* session per client.
+    - Resolves session_id by joining to view_current_session_id_from_geodata (latest geodata per client).
+    - Tags each route with the correct session window via mqtt_sessions (time-bound join).
+    - Limits to rows created in the last ~10 seconds to avoid republishing old history.
     """
     query = """
         SELECT
-            client_id,
-            stop_id,
-            destination_lat,
-            destination_lon,
-            ST_AsText(path) AS path,
-            created_at
-        FROM view_routes_unified
-        WHERE created_at >= NOW() - INTERVAL '10 seconds'
-        ORDER BY created_at DESC;
+            r."client_id",
+            s."session_id",
+            r."stop_id",
+            r."destination_lat",
+            r."destination_lon",
+            ST_AsText(r."path") AS "path",
+            r."segment_type",
+            r."created_at"
+        FROM (
+            SELECT "client_id","stop_id","destination_lat","destination_lon","path","segment_type","created_at"
+            FROM "optimized_routes" WHERE "is_valid" = TRUE
+            UNION ALL
+            SELECT "client_id","stop_id","destination_lat","destination_lon","path","segment_type","created_at"
+            FROM "reroutes"
+        ) AS r
+        JOIN "mqtt_sessions" AS s
+          ON s."client_id" = r."client_id"
+         AND r."created_at" >= s."start_time"
+         AND r."created_at" <  s."end_time"
+        JOIN "view_current_session_id_from_geodata" AS c
+          ON c."client_id" = r."client_id"
+         AND c."session_id" = s."session_id"
+        WHERE r."created_at" >= NOW() - INTERVAL '10 seconds'
+        ORDER BY r."created_at" DESC;
     """
     return load_from_db(query, ())
+

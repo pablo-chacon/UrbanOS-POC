@@ -1,0 +1,361 @@
+version: '3.8'
+
+services:
+  mqtt-broker:
+    build:
+      context: ./mqtt
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mqtt/data:/mosquitto/data
+      - ./mqtt/log:/mosquitto/log
+    networks:
+      - lbrp-network
+    restart: unless-stopped
+
+  postgres:
+    build:
+      context: ./postgresql
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresql/lbrp_db.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgresql/custom_entrypoint.sh:/usr/local/bin/custom_entrypoint.sh
+    entrypoint: ["/usr/local/bin/custom_entrypoint.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lbrp-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: always
+
+  static-gtfs:
+    build:
+      context: ./static_gtfs
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./static_gtfs:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  rtd:
+    build:
+      context: ./rtd
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./rtd:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  process-geodata:
+    build:
+      context: ./geodata_processor
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./geodata_processor:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  patterns:
+    build:
+      context: ./patterns
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./patterns:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  hotspots:
+    build:
+      context: ./hotspots
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./hotspots:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  pois:
+    build:
+      context: ./pois
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./pois:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  future-pois:
+    build:
+      context: ./future_pois
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./future_pois:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  models:
+    build:
+      context: ./models
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./models:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: on-failure
+
+  subscriber:
+    build:
+      context: ./subscriber
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./subscriber:/app
+    networks:
+      - lbrp-network
+    restart: always
+
+  geo_fencing:
+    build:
+      context: ./geo_fencing
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./geo_fencing:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  retention:
+    build:
+      context: ./retention
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      # optional tunables:
+      - RETENTION_TTL_DAYS=28
+      - RETENTION_BATCH_SIZE=2000
+      - RETENTION_SLEEP_SECONDS=5
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  astar:
+    build:
+      context: ./astar
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./astar:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  mapf:
+    build:
+      context: ./mapf
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./mapf:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  routing:
+    build:
+      context: ./routing
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./routing:/app
+      - ./saved_models:/app/saved_models
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  routing-planner:
+    build:
+      context: ./routing_planner
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./routing_planner:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+  producer:
+    build:
+      context: ./producer
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mqtt-broker:
+        condition: service_started
+    volumes:
+      - ./producer:/app
+    networks:
+      - lbrp-network
+    restart: always
+
+  uos-api:
+    build:
+      context: ./uos_api
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./uos_api:/app
+    ports:
+      - "8181:8181"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lbrp-network
+    restart: always
+
+networks:
+  lbrp-network:
+    driver: bridge

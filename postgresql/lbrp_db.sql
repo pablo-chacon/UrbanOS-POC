@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS "hotspots" CASCADE;
 DROP TABLE IF EXISTS "predicted_pois" CASCADE;
 DROP TABLE IF EXISTS "predicted_pois_sequence" CASCADE;
 
--- MQTT session management
+-- MQTT sessions
 CREATE TABLE mqtt_sessions (
                                "id" SERIAL PRIMARY KEY,  -- internal ID for DB management
                                "session_id" INTEGER GENERATED ALWAYS AS IDENTITY UNIQUE,  -- trusted session_id used throughout UrbanOS
@@ -412,6 +412,10 @@ CREATE INDEX IF NOT EXISTS "mapf_routes_coords_idx" ON "mapf_routes" ("destinati
 CREATE INDEX IF NOT EXISTS "trajectories_created_idx" ON "trajectories" ("created_at");
 CREATE INDEX IF NOT EXISTS "optimized_routes_segment_idx" ON "optimized_routes" ("segment_type");
 CREATE INDEX IF NOT EXISTS "reroutes_segment_idx" ON "reroutes" ("segment_type");
+CREATE INDEX IF NOT EXISTS "geodata_client_time_idx" ON "geodata" ("client_id","timestamp" DESC, "updated_at" DESC);
+CREATE INDEX IF NOT EXISTS "mqtt_sessions_client_bounds_idx" ON "mqtt_sessions" ("client_id","start_time","end_time");
+CREATE INDEX IF NOT EXISTS "optimized_routes_client_time_idx" ON "optimized_routes" ("client_id","created_at" DESC);
+CREATE INDEX IF NOT EXISTS "reroutes_client_time_idx" ON "reroutes" ("client_id","created_at" DESC);
 
 
 CREATE OR REPLACE VIEW "view_routing_candidates_gtfsrt" AS
@@ -486,6 +490,15 @@ FROM (
      ) sub
 WHERE last_ts >= NOW() - INTERVAL '26 hours'
    OR last_seen >= NOW() - INTERVAL '2 seconds';
+
+
+CREATE OR REPLACE VIEW "view_current_session_id_from_geodata" AS
+SELECT DISTINCT ON (g."client_id")
+    g."client_id",
+    g."session_id"
+FROM "geodata" AS g
+ORDER BY g."client_id", g."timestamp" DESC, g."updated_at" DESC;
+
 
 
 CREATE OR REPLACE VIEW "view_astar_eta" AS
