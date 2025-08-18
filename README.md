@@ -91,13 +91,13 @@ cd urbanos-poc
 cp .env.example .env
 
 # Start all services
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 
 # Check container health
-docker compose ps
+docker-compose ps
 
 # Verify Postgres is ready
-docker compose exec postgres pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+docker-compose exec postgres pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
 
 # Run health checklist
 ./health.sh uos_full/uos_full --stop-on-fail
