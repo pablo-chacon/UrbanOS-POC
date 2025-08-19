@@ -187,3 +187,11 @@ If you cannot agree to these terms, **do not use UrbanOS-PoC**.
 
 Contact: pablo-chacon-ai@proton.me
 
+---
+
+## 💡 Support the Project
+
+UrbanOS is released as open source to benefit everyone.  
+If you find it useful and would like to support future development, you can send ETH to:
+0x47eb960c631B54b8907241f42808170e8200f416
+
