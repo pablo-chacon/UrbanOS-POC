@@ -185,13 +185,34 @@ If you cannot agree to these terms, **do not use UrbanOS-PoC**.
 
 “UrbanOS” may be used to describe unmodified, compliant distributions. **Do not imply endorsement** by the authors or contributors. You must clearly mark forks and materially modified versions.
 
-Contact: pablo-chacon-ai@proton.me
+---
+
+## License
+
+UrbanOS-PoC is licensed under the **Apache License, Version 2.0**.  
+See [`LICENSE`](./LICENSE). SPDX: `Apache-2.0`.
+
+---
+
+## Disclaimer / Assumption of Risk
+
+This software is provided **“AS IS” and “AS AVAILABLE,” without warranties** of any kind, express or implied, including but not limited to merchantability, fitness for a particular purpose, and non-infringement. **You use UrbanOS-PoC at your own risk.** The authors and contributors **shall not be liable** for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
+
+---
+
+## Contact
+
+For questions, collaborations, or feedback:  
+📧 Email: pablo-chacon-ai@proton.me  
+🌐 GitHub: https://github.com/your-username)](https://github.com/pablo-chacon
 
 ---
 
 ## 💡 Support the Project
 
-UrbanOS is released as open source to benefit everyone.  
-If you find it useful and would like to support future development, you can send ETH to:
+If you find this project useful and would like to support future development, you can send ETH to:
 0x47eb960c631B54b8907241f42808170e8200f416
+
+*Donations are voluntary and non-refundable. Thank you for your support! ❤️*
+
 
