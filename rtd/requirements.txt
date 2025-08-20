@@ -1,8 +1,6 @@
-# General dependencies
-requests
-python-dotenv
-# Database dependencies
-psycopg  # PostgreSQL driver for psycopg3
-# Data processing
-pandas
-gtfs-realtime-bindings
+requests==2.32.3
+python-dotenv==1.0.1
+psycopg==3.2.3
+pandas==2.2.2
+gtfs-realtime-bindings==0.0.7
+protobuf==4.25.3

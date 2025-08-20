@@ -1,7 +1,7 @@
-paho-mqtt
-psycopg[binary]
-psycopg[pool]
-python-dotenv
-numpy
-geopy
-shapely
+paho-mqtt==1.6.1
+psycopg[binary]==3.2.3
+psycopg_pool==3.2.3
+python-dotenv==1.0.1
+numpy==2.0.2
+geopy==2.4.1
+shapely==2.0.6

@@ -1,7 +1,8 @@
-psycopg[binary]
-python-dotenv
-pandas
-geopy
-shapely
-geopandas
-psycopg-pool
+psycopg[binary]==3.2.3
+python-dotenv==1.0.1
+pandas==2.2.2
+geopy==2.4.1
+shapely==2.0.6
+geopandas==1.0.1
+pyproj==3.6.1
+psycopg_pool==3.2.3

@@ -1,5 +1,5 @@
-psycopg[binary]
-python-dotenv
-pandas
-numpy
-shapely
+psycopg[binary]==3.2.3
+python-dotenv==1.0.1
+pandas==2.2.2
+numpy==1.26.4
+shapely==2.0.6
