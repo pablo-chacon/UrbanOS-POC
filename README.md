@@ -23,11 +23,20 @@ Currently the PoC integrates **Stockholm’s Lokaltrafik (SL)** public transport
   - Trip Updates → `https://opendata.samtrafiken.se/gtfs-rt/{operator}/TripUpdates.pb?key={apikey}`  
   - Vehicle Positions → `https://opendata.samtrafiken.se/gtfs-rt/{operator}/VehiclePositions.pb?key={apikey}`  
 
-Simulation:  
-- [Locust MQTT simulation scripts](https://github.com/pablo-chacon/mqtt-simulations/blob/main/README.md)  
+---
+
+**Simulation**:
+- Recommended minimum clients 100 to ensure enough data. 
+- **MQTT IoT Stream Simulation** pre-release test 250 clients in 5 min.
+- **MQTT Bulk Simulation** pre-release test 100 clients in 3 min.
+- [Locust MQTT simulation scripts](https://github.com/pablo-chacon/mqtt-simulations/blob/main/README.md)
+
+---
+
+**MQTT-Client Templates**:
 - [MQTT Client Templates](https://github.com/pablo-chacon/mqtt-client-templates)  
 
-
+---
 
 ## Architecture at a Glance
 
