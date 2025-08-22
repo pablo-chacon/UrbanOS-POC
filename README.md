@@ -204,7 +204,7 @@ This software is provided **“AS IS” and “AS AVAILABLE,” without warranti
 
 For questions, collaborations, or feedback:  
 📧 Email: pablo-chacon-ai@proton.me  
-🌐 GitHub: https://github.com/your-username)](https://github.com/pablo-chacon
+🌐 GitHub: https://github.com/pablo-chacon
 
 ---
 
