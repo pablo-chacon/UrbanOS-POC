@@ -1,8 +1,7 @@
-psycopg[binary]==3.2.3
-pandas==2.2.2
-geopandas==1.0.1
-numpy==2.0.2
-python-dotenv==1.0.1
-scikit-learn==1.5.2
-shapely==2.0.6
-pyproj==3.6.1
+psycopg[binary]  # PostgreSQL connection (psycopg3)
+pandas  # Data processing
+geopandas
+numpy  # Mathematical operations
+python-dotenv  # Environment variable management
+scikit-learn
+shapely
