@@ -1,6 +1,6 @@
-osmnx==1.9.3
-networkx==3.2.1
-numpy==1.26.4
-shapely==2.0.6
-psycopg[binary]==3.2.3
-python-dotenv==1.0.1
+osmnx
+networkx
+numpy
+shapely
+psycopg[binary]
+python-dotenv
