@@ -1,7 +1,14 @@
 
 # UrbanOS-PoC
 
-UrbanOS-PoC is a **Proof of Concept** built on the [Sovereign, Self-Healing AI Architecture](https://github.com/pablo-chacon/Sovereign-Self-Healing-AI/blob/main/README.md).  
+UrbanOS-PoC is a **Proof of Concept** built on the [Sovereign, Self-Healing AI Architecture](https://github.com/pablo-chacon/Sovereign-Self-Healing-AI/blob/main/README.md). 
+
+---
+
+*“Transit isn’t just supply. It’s supply + human behavior. UrbanOS is the first system that optimizes the human side in real time, without stress or coercion.”*  
+— *Emil Karlsson, Creator of UrbanOS and Sovereign, Self-Healing AI*
+
+---
 
 It is **sovereign** because:
 - Hardware agnostic: runs on commodity CPUs, containers, and cloud/on-prem equally well.  
