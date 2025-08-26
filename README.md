@@ -216,6 +216,10 @@ This software is provided **“AS IS” and “AS AVAILABLE,” without warranti
 
 ---
 
+UrbanOS wiki: [[UrbanOS Wiki](https://github.com/pablo-chacon/UrbanOS-POC/wiki)]
+
+---
+
 ## Contact
 
 For questions, collaborations, or feedback:  
