@@ -8,6 +8,8 @@ UrbanOS-PoC is a **Proof of Concept** built on the [Sovereign, Self-Healing AI A
 *“Transit isn’t just supply. It’s supply + human behavior. UrbanOS is the first system that optimizes the human side in real-time, without stress or coercion.”*  
 — *Emil Karlsson, Creator of UrbanOS and Sovereign, Self-Healing AI*
 
+[[UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)]
+
 ---
 
 It is **sovereign** because:
@@ -41,6 +43,7 @@ Currently the PoC integrates **Stockholm’s Lokaltrafik (SL)** public transport
 ---
 
 **MQTT-Client Templates**:
+- Client templates (Go, Node.js, Python)
 - [MQTT Client Templates](https://github.com/pablo-chacon/mqtt-client-templates)  
 
 ---
