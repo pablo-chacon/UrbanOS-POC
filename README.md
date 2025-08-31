@@ -1,56 +1,66 @@
 
+---
+
 # UrbanOS-PoC
 
-UrbanOS-PoC is a **Proof of Concept** built on the [Sovereign, Self-Healing AI Architecture](https://github.com/pablo-chacon/Sovereign-Self-Healing-AI/blob/main/README.md). 
+UrbanOS-PoC is a **Proof of Concept** built on the [Sovereign, Self-Healing AI Architecture](https://github.com/pablo-chacon/Sovereign-Self-Healing-AI/blob/main/README.md).
 
 ---
 
-*“Transit isn’t just supply. It’s supply + human behavior. UrbanOS is the first system that optimizes the human side in real-time, without stress or coercion.”*  
+*“Transit isn’t just supply. It’s supply + human behavior. UrbanOS is the first system that optimizes the human side in real-time, without stress or coercion.”*
 — *Emil Karlsson, Creator of UrbanOS and Sovereign, Self-Healing AI*
 
-[[UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)]
+\[[UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)]
+
+See the [[UrbanOS Wiki](https://github.com/pablo-chacon/UrbanOS-POC/wiki)] for examples of [[Data Warehouse Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/Datawarehouse-feed-example)] and [[InfluxDB Aggregation Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/InfluxDB-Aggregation-Feed-Example)]
 
 ---
 
 It is **sovereign** because:
-- Hardware agnostic: runs on commodity CPUs, containers, and cloud/on-prem equally well.  
-- No humans in the loop: no prompts, no manual decision-making, fully automated.  
-- Decisions are based only on **machine data**, not human input.  
 
-It is **self-healing** because:  
-- Operates a **26h Machine Learning / Deep Learning loop** that continuously re-learns from trajectories, POIs, patterns, and hotspots.  
-- Adjusts routing and predictions to deviations automatically.  
-- Never requires human intervention to maintain consistency.  
+* Hardware agnostic: runs on commodity CPUs, containers, and cloud/on-prem equally well.
+* No humans in the loop: no prompts, no manual decision-making, fully automated.
+* Decisions are based only on **machine data**, not human input.
 
-UrbanOS-PoC targets **Urban Flow**: minimizing friction for residents, operators, and planners.  
-Compatible with virtually any **IoT unit** and **API**.  
+It is **self-healing** because:
 
-Currently the PoC integrates **Stockholm’s Lokaltrafik (SL)** public transport feeds via [Trafiklab](https://www.trafiklab.se/):  
-- Static GTFS: [GTFS Regional](https://www.trafiklab.se/api/gtfs-datasets/gtfs-regional/#realtime-data)  
-- GTFS-RT (Samtrafiken Open Data):  
-  - Service Alerts → `https://opendata.samtrafiken.se/gtfs-rt/{operator}/ServiceAlerts.pb?key={apikey}`  
-  - Trip Updates → `https://opendata.samtrafiken.se/gtfs-rt/{operator}/TripUpdates.pb?key={apikey}`  
-  - Vehicle Positions → `https://opendata.samtrafiken.se/gtfs-rt/{operator}/VehiclePositions.pb?key={apikey}`  
+* Operates a **26h Machine Learning / Deep Learning loop** that continuously re-learns from trajectories, POIs, patterns, and hotspots.
+* Adjusts routing and predictions to deviations automatically.
+* Never requires human intervention to maintain consistency.
+
+UrbanOS-PoC targets **Urban Flow**: minimizing friction for residents, operators, and planners.
+Compatible with virtually any **IoT unit** and **API**.
+
+Currently the PoC integrates **Stockholm’s Lokaltrafik (SL)** public transport feeds via [Trafiklab](https://www.trafiklab.se/):
+
+* Static GTFS: [GTFS Regional](https://www.trafiklab.se/api/gtfs-datasets/gtfs-regional/#realtime-data)
+* GTFS-RT (Samtrafiken Open Data):
+
+  * Service Alerts → `https://opendata.samtrafiken.se/gtfs-rt/{operator}/ServiceAlerts.pb?key={apikey}`
+  * Trip Updates → `https://opendata.samtrafiken.se/gtfs-rt/{operator}/TripUpdates.pb?key={apikey}`
+  * Vehicle Positions → `https://opendata.samtrafiken.se/gtfs-rt/{operator}/VehiclePositions.pb?key={apikey}`
 
 ---
 
 **Simulation**:
-- Recommended minimum clients 100 to ensure enough data. 
-- **MQTT IoT Stream Simulation** pre-release test 250 clients in 5 min.
-- **MQTT Bulk Simulation** pre-release test 100 clients in 3 min.
-- [Locust MQTT simulation scripts](https://github.com/pablo-chacon/mqtt-simulations/blob/main/README.md)
+
+* Recommended minimum clients 100 to ensure enough data.
+* **MQTT IoT Stream Simulation** pre-release test 250 clients in 5 min.
+* **MQTT Bulk Simulation** pre-release test 100 clients in 3 min.
+* [Locust MQTT simulation scripts](https://github.com/pablo-chacon/mqtt-simulations/blob/main/README.md)
 
 ---
 
 **MQTT-Client Templates**:
-- Client templates (Go, Node.js, Python)
-- [MQTT Client Templates](https://github.com/pablo-chacon/mqtt-client-templates)  
+
+* Client templates (Go, Node.js, Python)
+* [MQTT Client Templates](https://github.com/pablo-chacon/mqtt-client-templates)
 
 ---
 
 ## Architecture at a Glance
 
-
+```mermaid
 flowchart TD
     subgraph Ingestion["🔌 Ingestion Layer"]
         MQTT[MQTT Broker]
@@ -93,7 +103,7 @@ flowchart TD
     FuturePOI --> Schedule
     Schedule --> Views
     Views --> Producer
-
+```
 
 ---
 
@@ -153,11 +163,21 @@ curl -s http://localhost:8181/api/view_astar_eta | jq
 
 ---
 
+## UrbanOS wiki and related resources
+
+* [**UrbanOS Wiki (main hub)**](https://github.com/pablo-chacon/UrbanOS-POC/wiki)
+
+  * [UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)
+  * [Data Warehouse Feed Example](https://github.com/pablo-chacon/UrbanOS-POC/wiki/Datawarehouse-feed-example)
+  * [InfluxDB Aggregation Feed Example](https://github.com/pablo-chacon/UrbanOS-POC/wiki/InfluxDB-Aggregation-Feed-Example)
+* [**UOS-New-Trajectories-Listener**](https://github.com/pablo-chacon/UOS-New-Trajectories-Listener) — external module for anonymized KPI export to InfluxDB
+
+---
+
 ## License
 
 UrbanOS-PoC is licensed under the **Apache License, Version 2.0**.
 See [`LICENSE`](./LICENSE). SPDX: `Apache-2.0`.
-
 
 ---
 
@@ -186,7 +206,7 @@ UrbanOS aims to improve **urban flow** and reduce friction for residents, operat
 * **Predictive policing** or military targeting of persons.
 * **Covert monitoring** of employees, students, or residents without clear legal basis and informed consent.
 
-This repository intentionally avoids storing personal identifiers; **any downstream modification that introduces person-level identification is your responsibility** and must comply with applicable law and ethics.
+This repository intentionally avoids storing personal identifiers. **Any downstream modification that introduces person-level identification is your responsibility** and must comply with applicable law and ethics.
 
 If you cannot agree to these terms, **do not use UrbanOS-PoC**.
 
@@ -195,7 +215,7 @@ If you cannot agree to these terms, **do not use UrbanOS-PoC**.
 ## Safety Notes
 
 * **Not for real-time control.** Outputs are advisory for planners and dashboards.
-* **Latency/accuracy vary** with feeds and deployment; validate before making operational decisions.
+* **Latency and accuracy vary** with feeds and deployment, validate before making operational decisions.
 * **Deployer-controlled storage.** All long-term storage, backups, and retention policies are your responsibility.
 
 ---
@@ -206,36 +226,20 @@ If you cannot agree to these terms, **do not use UrbanOS-PoC**.
 
 ---
 
-## License
-
-UrbanOS-PoC is licensed under the **Apache License, Version 2.0**.  
-See [`LICENSE`](./LICENSE). SPDX: `Apache-2.0`.
-
----
-
-## Disclaimer / Assumption of Risk
-
-This software is provided **“AS IS” and “AS AVAILABLE,” without warranties** of any kind, express or implied, including but not limited to merchantability, fitness for a particular purpose, and non-infringement. **You use UrbanOS-PoC at your own risk.** The authors and contributors **shall not be liable** for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
-
----
-
-UrbanOS wiki: [[UrbanOS Wiki](https://github.com/pablo-chacon/UrbanOS-POC/wiki)]
-
----
-
 ## Contact
 
-For questions, collaborations, or feedback:  
-📧 Email: pablo-chacon-ai@proton.me  
-🌐 GitHub: https://github.com/pablo-chacon
+For questions, collaborations, or feedback:
+📧 Email: [pablo-chacon-ai@proton.me](mailto:pablo-chacon-ai@proton.me)
+🌐 GitHub: [https://github.com/pablo-chacon](https://github.com/pablo-chacon)
 
 ---
 
 ## 💡 Support the Project
 
 If you find this project useful and would like to support future development, you can send ETH to:
-0x47eb960c631B54b8907241f42808170e8200f416
+`0x47eb960c631B54b8907241f42808170e8200f416`
 
 *Donations are voluntary and non-refundable. Thank you for your support! ❤️*
 
+---
 
