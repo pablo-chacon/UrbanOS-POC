@@ -60,7 +60,7 @@ Currently the PoC integrates **Stockholm’s Lokaltrafik (SL)** public transport
 
 ## Architecture at a Glance
 
-```mermaid
+```
 flowchart TD
     subgraph Ingestion["🔌 Ingestion Layer"]
         MQTT[MQTT Broker]
