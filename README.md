@@ -53,7 +53,7 @@ Currently the PoC integrates **Stockholm’s Lokaltrafik (SL)** public transport
 
 ## Locust Load Test
 
-A dedicated load test was executed with **150 concurrent clients** using Locust.  
+A dedicated load test was executed with **150 concurrent clients** using [Locust](https://www.locust.cloud/).  
 This test verified system stability, throughput, and response under sustained client activity.
 
 **Results Overview:**
