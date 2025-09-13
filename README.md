@@ -45,9 +45,31 @@ Currently the PoC integrates **Stockholm’s Lokaltrafik (SL)** public transport
 **Simulation**:
 
 * Recommended minimum clients 100 to ensure enough data.
-* **MQTT IoT Stream Simulation** pre-release test 250 clients in 5 min.
+* **MQTT IoT Stream Simulation** pre-release test 250 clients in 10 min.
 * **MQTT Bulk Simulation** pre-release test 100 clients in 3 min.
 * [Locust MQTT simulation scripts](https://github.com/pablo-chacon/mqtt-simulations/blob/main/README.md)
+
+---
+
+## Locust Load Test
+
+A dedicated load test was executed with **150 concurrent clients** using Locust.  
+This test verified system stability, throughput, and response under sustained client activity.
+
+**Results Overview:**
+
+![Locust Report](./locust_test.png)
+
+**Performance Chart:**
+
+![Test Chart](./test_chart.png)
+
+---
+
+**MQTT-Client Templates**:
+
+* Client templates (Go, Node.js, Python)
+* [MQTT Client Templates](https://github.com/pablo-chacon/mqtt-client-templates)
 
 ---
 
