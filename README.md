@@ -12,7 +12,7 @@ UrbanOS-PoC is a **Proof of Concept** built on the [Sovereign, Self-Healing AI A
 
 \[[UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)]
 
-See the [[UrbanOS Wiki](https://github.com/pablo-chacon/UrbanOS-POC/wiki)] for examples of [[Data Warehouse Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/Datawarehouse-feed-example)] and [[InfluxDB Aggregation Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/InfluxDB-Aggregation-Feed-Example)]
+\See the [[UrbanOS Wiki](https://github.com/pablo-chacon/UrbanOS-POC/wiki)] example of [[Data Warehouse Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/Datawarehouse-feed-example)] and \[[InfluxDB Aggregation Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/InfluxDB-Aggregation-Feed-Example)]
 
 ---
 
@@ -58,11 +58,11 @@ This test verified system stability, throughput, and response under sustained cl
 
 **Results Overview:**
 
-![Locust Report](./locust_test.png)
+![Locust Report](./resources/locust_test.png)
 
 **Performance Chart:**
 
-![Test Chart](./test_chart.png)
+![Test Chart](./resources/test_chart.png)
 
 ---
 
