@@ -53,16 +53,80 @@ Currently the PoC integrates **Stockholm’s Lokaltrafik (SL)** public transport
 
 ## Locust Load Test
 
-A dedicated load test was executed with **150 concurrent clients** using [Locust](https://www.locust.cloud/).  
-This test verified system stability, throughput, and response under sustained client activity.
+A dedicated load test was executed with **\~49 req/s aggregated** across four endpoints and **0.00% failures**.
 
-**Results Overview:**
+```mermaid
+pie showData
+title Requests per endpoint (73,518 total)
+"GET /api/astar_routes (18,381)" : 18381
+"GET /api/mapf_routes (18,380)" : 18380
+"GET /api/view_eta_accuracy_seconds (18,378)" : 18378
+"GET /api/view_routes_astar_mapf_latest (18,379)" : 18379
+```
 
-![Locust Report](./resources/locust_test.png)
+```mermaid
+flowchart TB
+    classDef card fill:#0b1220,stroke:#2b3a55,stroke-width:1px,color:#e9f0ff,rx:10,ry:10;
+    classDef good fill:#0e2a19,stroke:#2f6b45,color:#e9fff3,rx:8,ry:8;
+    classDef warn fill:#2a210e,stroke:#6b5a2f,color:#fff7e9,rx:8,ry:8;
 
-**Performance Chart:**
+    A["
+**GET /api/astar_routes**  
+reqs: **18,381**  
+P50: **9 ms**  
+P95: **21 ms**  
+P99: **33 ms**  
+Max: **120 ms**  
+fails: **0.00%**"]:::card
 
-![Test Chart](./resources/test_chart.png)
+    B["
+**GET /api/mapf_routes**  
+reqs: **18,380**  
+P50: **5 ms**  
+P95: **14 ms**  
+P99: **24 ms**  
+Max: **94 ms**  
+fails: **0.00%**"]:::card
+
+    C["
+**GET /api/view_eta_accuracy_seconds**  
+reqs: **18,378**  
+P50: **4 ms**  
+P95: **14 ms**  
+P99: **24 ms**  
+Max: **65 ms**  
+fails: **0.00%**"]:::card
+
+    D["
+**GET /api/view_routes_astar_mapf_latest**  
+reqs: **18,379**  
+P50: **8 ms**  
+P95: **20 ms**  
+P99: **30 ms**  
+Max: **100 ms**  
+fails: **0.00%**"]:::card
+
+    subgraph Summary
+      S1["
+**Aggregated**  
+Throughput: **49.01 req/s**  
+Avg (all): **6 ms**  
+P95 (all): **18 ms**  
+Max (all): **120 ms**  
+Failures: **0.00%**"]:::good
+    end
+
+    A --- S1
+    B --- S1
+    C --- S1
+    D --- S1
+```
+
+> **Interpretation**
+>
+> * All four endpoints are comfortably under **P95 ≤ 21 ms**, with zero failures across **73,518** requests.
+> * `GET /api/mapf_routes` and `GET /api/view_eta_accuracy_seconds` are the fastest (P50 **5 ms** and **4 ms** respectively).
+> * Rare long tails exist (max 120 ms) but P99 values remain tight (≤ **33 ms**), indicating consistent latency.
 
 ---
 
