@@ -3,16 +3,26 @@
 
 # UrbanOS-PoC
 
-UrbanOS-PoC is a **Proof of Concept** built on the [Sovereign, Self-Healing AI Architecture](https://github.com/pablo-chacon/Sovereign-Self-Healing-AI/blob/main/README.md).
+UrbanOS is a pure-software **ITS** (Intelligent Transport System) designed for real-time mobility orchestration, independent of fleet, vehicles, or hardware vendors.
+
+**ITS Definition:**
+"Software platforms that coordinate the movement of people or goods across multiple transportation modes without direct dependence on a specific fleet or hardware platform."
 
 ---
 
 *“Transit isn’t just supply. It’s supply + human behavior. UrbanOS is the first protocol that optimizes the human side in real-time, without stress or coercion.”*
 — *Emil Karlsson, Creator of UrbanOS and Sovereign, Self-Healing AI*
 
-\[[UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)]
+---
 
-\See the [[UrbanOS Wiki](https://github.com/pablo-chacon/UrbanOS-POC/wiki)] example of [[Data Warehouse Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/Datawarehouse-feed-example)] and \[[InfluxDB Aggregation Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/InfluxDB-Aggregation-Feed-Example)]
+* \[[UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)]
+
+* **[[UrbanOS Wiki](https://github.com/pablo-chacon/UrbanOS-POC/wiki)]**
+* **[[Data Warehouse Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/Datawarehouse-feed-example)]**
+
+* **[[InfluxDB Aggregation Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/InfluxDB-Aggregation-Feed-Example)]**
+
+* UrbanOS-PoC is a **Proof-Of-Concept** built on the **[Sovereign, Self-Healing AI Architecture](https://github.com/pablo-chacon/Sovereign-Self-Healing-AI/blob/main/README.md)**.
 
 ---
 
