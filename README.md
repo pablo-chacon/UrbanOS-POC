@@ -147,13 +147,6 @@ Failures: **0.00%**"]:::good
 
 ---
 
-**MQTT-Client Templates**:
-
-* Client templates (Go, Node.js, Python)
-* [MQTT Client Templates](https://github.com/pablo-chacon/mqtt-client-templates)
-
----
-
 ## Architecture at a Glance
 
 ```
