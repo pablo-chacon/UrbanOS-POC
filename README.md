@@ -11,16 +11,16 @@ UrbanOS is a pure-software **ITS** (Intelligent Transport System) designed for r
 ---
 
 *“Transit isn’t just supply. It’s supply + human behavior. UrbanOS is the first protocol that optimizes the human side in real-time, without stress or coercion.”*
-— *Emil Karlsson, Creator of UrbanOS and Sovereign, Self-Healing AI*
+- *Emil Karlsson, Creator of UrbanOS and Sovereign, Self-Healing AI*
 
 ---
 
-* **\[[UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)]**
+* **\[UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)**
 
-* **[[UrbanOS Wiki](https://github.com/pablo-chacon/UrbanOS-POC/wiki)]**
-* **[[Data Warehouse Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/Datawarehouse-feed-example)]**
+* **[UrbanOS Wiki](https://github.com/pablo-chacon/UrbanOS-POC/wiki)**
+* **[Data Warehouse Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/Datawarehouse-feed-example)**
 
-* **[[InfluxDB Aggregation Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/InfluxDB-Aggregation-Feed-Example)]**
+* **[InfluxDB Aggregation Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/InfluxDB-Aggregation-Feed-Example)**
 
 * UrbanOS-PoC is a **Proof-Of-Concept** built on the **[Sovereign, Self-Healing AI Architecture](https://github.com/pablo-chacon/Sovereign-Self-Healing-AI/blob/main/README.md)**.
 
@@ -41,14 +41,14 @@ It is **self-healing** because:
 UrbanOS-PoC targets **Urban Flow**: minimizing friction for residents, operators, and planners.
 Compatible with virtually any **IoT unit** and **API**.
 
-Currently the PoC integrates **Stockholm’s Lokaltrafik (SL)** public transport feeds via [Trafiklab](https://www.trafiklab.se/):
+Currently the PoC integrates **Stockholm’s Lokaltrafik (SL)** public transport feeds via **[Trafiklab](https://www.trafiklab.se/)**:
 
-* Static GTFS: [GTFS Regional](https://www.trafiklab.se/api/gtfs-datasets/gtfs-regional/#realtime-data)
+* Static GTFS: **[GTFS Regional](https://www.trafiklab.se/api/gtfs-datasets/gtfs-regional/#realtime-data)**
 * GTFS-RT (Samtrafiken Open Data):
 
-  * Service Alerts → `https://opendata.samtrafiken.se/gtfs-rt/{operator}/ServiceAlerts.pb?key={apikey}`
-  * Trip Updates → `https://opendata.samtrafiken.se/gtfs-rt/{operator}/TripUpdates.pb?key={apikey}`
-  * Vehicle Positions → `https://opendata.samtrafiken.se/gtfs-rt/{operator}/VehiclePositions.pb?key={apikey}`
+  * Service Alerts: `https://opendata.samtrafiken.se/gtfs-rt/{operator}/ServiceAlerts.pb?key={apikey}`
+  * Trip Updates: `https://opendata.samtrafiken.se/gtfs-rt/{operator}/TripUpdates.pb?key={apikey}`
+  * Vehicle Positions: `https://opendata.samtrafiken.se/gtfs-rt/{operator}/VehiclePositions.pb?key={apikey}`
 
 ---
 
@@ -57,7 +57,7 @@ Currently the PoC integrates **Stockholm’s Lokaltrafik (SL)** public transport
 * Recommended minimum clients 100 to ensure enough data.
 * **MQTT IoT Stream Simulation** pre-release test 250 clients in 10 min.
 * **MQTT Bulk Simulation** pre-release test 100 clients in 3 min.
-* [Locust MQTT simulation scripts](https://github.com/pablo-chacon/mqtt-simulations/blob/main/README.md)
+* **[Locust MQTT simulation scripts](https://github.com/pablo-chacon/mqtt-simulations/blob/main/README.md)**
 
 ---
 
@@ -143,7 +143,7 @@ Failures: **0.00%**"]:::good
 **MQTT-Client Templates**:
 
 * Client templates (Go, Node.js, Python)
-* [MQTT Client Templates](https://github.com/pablo-chacon/mqtt-client-templates)
+* **[MQTT Client Templates](https://github.com/pablo-chacon/mqtt-client-templates)**
 
 ---
 
@@ -151,13 +151,13 @@ Failures: **0.00%**"]:::good
 
 ```
 flowchart TD
-    subgraph Ingestion["🔌 Ingestion Layer"]
+    subgraph Ingestion["Ingestion Layer"]
         MQTT[MQTT Broker]
         Sub[Subscriber]
         GTFS[GTFS / GTFS-RT API]
     end
 
-    subgraph Storage["🗄 Storage & Processing"]
+    subgraph Storage["Storage & Processing"]
         Geo[Geodata (26h window)]
         Traj[Trajectories (28d window)]
         Patterns[User Patterns]
@@ -165,16 +165,16 @@ flowchart TD
         Hotspots[Hotspots]
     end
 
-    subgraph Intelligence["🧠 Sovereign Self-Healing AI (26h loop)"]
+    subgraph Intelligence["Sovereign Self-Healing AI (26h loop)"]
         Models[ML/DL Models]
         FuturePOI[Future POI Prediction]
         Routing[A* / MAPF / LBRP]
         Schedule[Weekly Schedule Generator]
     end
 
-    subgraph Outputs["📡 Outputs"]
+    subgraph Outputs["Outputs"]
         Views[Postgres Views / APIs]
-        Producer[Producer → Client / Planner Dashboards]
+        Producer[Producer -> Client / Planner Dashboards]
     end
 
     MQTT --> Sub --> Geo
@@ -222,14 +222,14 @@ docker-compose exec postgres pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
 ```
 
 The API will be available at:
-👉 `http://localhost:8181/api/`
+* **`http://localhost:8181/api/`**
 
 Example endpoints:
 
-* `/api/trajectories` → migrated client trajectories
-* `/api/pois` → detected Points of Interest
-* `/api/view_astar_eta` → A\* routing with ETA
-* `/api/view_predicted_routes_schedule` → weekly schedule predictions
+* `/api/trajectories` -> migrated client trajectories
+* `/api/pois` -> detected Points of Interest
+* `/api/view_astar_eta` -> A\* routing with ETA
+* `/api/view_predicted_routes_schedule` -> weekly schedule predictions
 
 ---
 
@@ -248,18 +248,17 @@ curl -s http://localhost:8181/api/predicted_pois_sequence | jq
 curl -s http://localhost:8181/api/view_astar_eta | jq
 ```
 
-👉 All responses are returned as JSON. Use `jq` (or any JSON viewer) for pretty-printing.
+All responses are returned as JSON. Use `jq` (or any JSON viewer) for pretty-printing.
 
 ---
 
 ## UrbanOS wiki and related resources
 
 * [**UrbanOS Wiki (main hub)**](https://github.com/pablo-chacon/UrbanOS-POC/wiki)
-
-  * [UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)
-  * [Data Warehouse Feed Example](https://github.com/pablo-chacon/UrbanOS-POC/wiki/Datawarehouse-feed-example)
-  * [InfluxDB Aggregation Feed Example](https://github.com/pablo-chacon/UrbanOS-POC/wiki/InfluxDB-Aggregation-Feed-Example)
-* [**UOS-New-Trajectories-Listener**](https://github.com/pablo-chacon/UOS-New-Trajectories-Listener) — external module for anonymized KPI export to InfluxDB
+* [UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)
+* [Data Warehouse Feed Example](https://github.com/pablo-chacon/UrbanOS-POC/wiki/Datawarehouse-feed-example)
+* [InfluxDB Aggregation Feed Example](https://github.com/pablo-chacon/UrbanOS-POC/wiki/InfluxDB-Aggregation-Feed-Example)
+* [**UOS-New-Trajectories-Listener**](https://github.com/pablo-chacon/UOS-New-Trajectories-Listener), external module for anonymized KPI export to InfluxDB
 
 ---
 
@@ -286,7 +285,7 @@ You, the deployer, are solely responsible for:
 
 ---
 
-## Ethical Use Policy (No Mass Surveillance)
+## Ethical Use Policy (**No Mass Surveillance**)
 
 UrbanOS aims to improve **urban flow** and reduce friction for residents, operators, and planners. You agree **not** to use this project to enable:
 
@@ -318,17 +317,17 @@ If you cannot agree to these terms, **do not use UrbanOS-PoC**.
 ## Contact
 
 For questions, collaborations, or feedback:
-📧 Email: [pablo-chacon-ai@proton.me](mailto:pablo-chacon-ai@proton.me)
-🌐 GitHub: [https://github.com/pablo-chacon](https://github.com/pablo-chacon)
+Email: [pablo-chacon-ai@proton.me](mailto:pablo-chacon-ai@proton.me)
+GitHub: [https://github.com/pablo-chacon](https://github.com/pablo-chacon)
 
 ---
 
-## 💡 Support the Project
+## Support the Project
 
 If you find this project useful and would like to support future development, you can send ETH to:
 `0x47eb960c631B54b8907241f42808170e8200f416`
 
-*Donations are voluntary and non-refundable. Thank you for your support! ❤️*
+**Donations are voluntary and non-refundable. Thank you for your support!**
 
 ---
 
