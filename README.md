@@ -15,7 +15,7 @@ UrbanOS is a pure-software **ITS** (Intelligent Transport System) designed for r
 
 ---
 
-* **\[UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)**
+* **[UrbanOS Whitepaper](https://github.com/pablo-chacon/UrbanOS-POC/wiki/UrbanOS%E2%80%90PoC-Whitepaper)**
 
 * **[UrbanOS Wiki](https://github.com/pablo-chacon/UrbanOS-POC/wiki)**
 * **[Data Warehouse Feed integration](https://github.com/pablo-chacon/UrbanOS-POC/wiki/Datawarehouse-feed-example)**
